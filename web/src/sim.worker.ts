@@ -5,7 +5,7 @@ type Row = { id: string; payment: string; source: Source; amount: number; at: nu
 type Payment = { ledger: number; processor: number; events: Row[]; revision: number; late: number; lastAt: number }
 const payments = new Map<string, Payment>()
 const seen = new Map<string, string>()
-const marks: Record<Source, number> = { ledger: 3, processor: 1 }
+const marks: Record<Source, number> = { ledger: -1, processor: -1 }
 let target = 10000, cursor = 0, accepted = 0, replays = 0, late = 0, running = false, fast = true
 const relevant = ['pay-00000257', 'pay-00000509', 'pay-00001028']
 
@@ -67,12 +67,12 @@ function pump() {
   for (; cursor < end; cursor++) emitPayment(cursor)
   publish()
   if (cursor < target) setTimeout(pump, fast ? 0 : 80)
-  else { running = false; publish() }
+  else { running = false; marks.ledger = 3; marks.processor = 1; publish() }
 }
 self.onmessage = (message: MessageEvent<{ type: string; payments?: number; fast?: boolean; id?: string }>) => {
   const command = message.data
   if (command.type === 'start') {
-    payments.clear(); seen.clear(); marks.ledger = 3; marks.processor = 1
+    payments.clear(); seen.clear(); marks.ledger = -1; marks.processor = -1
     target = command.payments ?? 10000; fast = command.fast ?? true
     cursor = accepted = replays = late = 0; running = true; publish(); pump()
   } else if (command.type === 'pause') { running = false; publish() }

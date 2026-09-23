@@ -2,7 +2,9 @@
 
 **Event-time reconciliation for high-volume payment operations.** A marketplace's internal ledger and payment processor may disagree about captures and refunds. Settlement Watch correlates both streams by tenant and payment, waits for source completeness before raising a mismatch, and lets a late record correct an exception without hiding the revision.
 
-This is a runnable reference system with **synthetic data**, not a payment product or customer deployment. It never initiates transfers, refunds, or payouts. [Architecture and limits](docs/architecture.md) · [Measured local benchmark](docs/benchmark.md)
+**[Open the live interactive replay](https://settlement-watch.netlify.app/)** · [Browser setup](web/README.md) · [Architecture and limits](docs/architecture.md) · [Measured local benchmark](docs/benchmark.md)
+
+This is a runnable reference system with **synthetic data**, not a payment product or customer deployment. It never initiates transfers, refunds, or payouts.
 
 ## The operating scenario
 
