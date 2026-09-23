@@ -4,6 +4,8 @@
 
 **[Open the live interactive replay](https://settlement-watch.netlify.app/)** · [Browser setup](web/README.md) · [Architecture and limits](docs/architecture.md) · [Measured local benchmark](docs/benchmark.md)
 
+![Settlement Watch live dashboard after a million-event browser replay](docs/dashboard.jpg)
+
 This is a runnable reference system with **synthetic data**, not a payment product or customer deployment. It never initiates transfers, refunds, or payouts.
 
 ## The operating scenario

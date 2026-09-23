@@ -10,3 +10,5 @@ npm run dev
 ```
 
 The hosted site is a static deploy of `dist/`. The measured SQLite benchmark in the root repository is **independent** of this worker replay. Worker throughput varies by browser and is not a server benchmark. See the root README and architecture notes for the durable engine, optional AI triage, and production gaps.
+
+The Netlify project is currently deployed by uploading the compiled `web/dist/` contents to the existing site. GitHub commits do not automatically redeploy it.

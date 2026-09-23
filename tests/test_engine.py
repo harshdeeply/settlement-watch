@@ -1,4 +1,5 @@
 import tempfile
+import random
 import unittest
 from pathlib import Path
 
@@ -108,6 +109,27 @@ class EngineTests(unittest.TestCase):
             self.assertIn('ledger', second.watermarks('shop-a'))
             self.assertEqual(second.payment('shop-a', 'pay-1')['events'], 1)
             second.close()
+
+    def test_shuffled_multi_payment_stream_matches_expected_totals(self):
+        rng = random.Random(7319)
+        rows = []
+        for index in range(150):
+            payment = f'pay-{index}'
+            capture = 1000 + index * 13
+            refund = index % 7 * 100
+            rows.extend([e(f'{payment}-lc', payment=payment, amount=capture),
+                         e(f'{payment}-pc', payment=payment, amount=capture - (1 if index % 29 == 0 else 0), source='processor')])
+            if refund:
+                rows.extend([e(f'{payment}-lr', payment=payment, amount=refund, kind='refund'),
+                             e(f'{payment}-pr', payment=payment, amount=refund, kind='refund', source='processor')])
+        rng.shuffle(rows)
+        self.engine.ingest_many(rows)
+        self.marks()
+        for index in range(150):
+            payment = self.engine.payment('shop-a', f'pay-{index}')
+            self.assertEqual(payment['status'], 'EXCEPTION' if index % 29 == 0 else 'BALANCED')
+            self.assertEqual(payment['ledger_capture'] - payment['processor_capture'], 1 if index % 29 == 0 else 0)
+        self.assertEqual(self.engine.counts('shop-a')['events'], len(rows))
 
 
 if __name__ == '__main__':
